@@ -105,7 +105,83 @@ namespace game_of_life
         }
         static void Drawing()
         {
+            // Frames
+            string[] frames = new string[]
+            {
+@"
+      .-.
+     (o.o)
+      |=|
+     __|__
+   //.=|=.\\
+  // .=|=. \\
+  || .=|=. ||
+  || (_=_) ||
+  () || || ()
+     || ||
+     () ()
+     || ||
+     || ||
+    ==' '==
+",
+@"
+      .-.
+     (o.o)
+      |=|
+     __|__
+   //.=|=.\\
+  // .=|=. \\
+  || .=|=. ||
+  || (_=_) ||
+  () // || ()
+    //  ||
+   ()   ()
+   ||   ||
+   ||   ||
+  =='   '==
+",
+@"
+      .-.
+     (o.o)
+      |=|
+     __|__
+   //.=|=.\\
+  // .=|=. \\
+  || .=|=. ||
+  || (_=_) ||
+  () || \\ ()
+     ||  \\
+     ()   ()
+     ||   ||
+     ||   ||
+    =='   '==
+"
+            };
 
+            int frameIndex = 0;
+
+            // Loop
+            while (true)
+            {
+                // Key check
+                if (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(true).Key;
+                    if (key == ConsoleKey.Escape)
+                        break;
+                }
+
+                // Draw frame
+                Console.Clear();
+                Console.WriteLine(frames[frameIndex]);
+                frameIndex = (frameIndex + 1) % frames.Length;
+                Thread.Sleep(300);
+            }
+
+            // Return
+            Console.Clear();
+            Console.WriteLine("Returning...");
+            Thread.Sleep(800);
         }
     }
 
