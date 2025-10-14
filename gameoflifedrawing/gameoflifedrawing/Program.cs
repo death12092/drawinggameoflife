@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace game_of_life
 {
@@ -66,7 +67,7 @@ namespace game_of_life
                 for (int r = 0; r < rows; r++)
                 {
                     for (int c = 0; c < cols; c++)
-                        Console.Write(board[r, c] ? 'O' : '.');
+                        Console.Write(board[r, c] ? '█' : '.');
                     Console.WriteLine();
                 }
 
@@ -183,6 +184,19 @@ namespace game_of_life
             Console.WriteLine("Returning...");
             Thread.Sleep(800);
         }
+        static void state1()
+        {
+
+        }
+        static void state2()
+        {
+
+        }
+        static void state3()
+        {
+
+        }
+
     }
 
 }
