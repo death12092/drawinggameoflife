@@ -19,8 +19,9 @@ namespace game_of_life
                 Console.WriteLine("=== Menu ===");
                 Console.WriteLine("1. game of life");
                 Console.WriteLine("2. ascii art");
-                Console.WriteLine("3. Exit");
-                Console.Write("Choose an option: ");
+                Console.WriteLine("3. background");
+                Console.WriteLine("4. Exit");
+                Console.Write("Choose an option(the number): ");
 
                 string input = Console.ReadLine();
 
@@ -30,7 +31,7 @@ namespace game_of_life
                     Console.WriteLine("Press any key to return to menu...");
                     Console.ReadKey();
                 }
-                else if (input == "3")
+                else if (input == "4")
                 {
                     Console.WriteLine("Goodbye!");  // Exit
                     break;
@@ -38,6 +39,10 @@ namespace game_of_life
                 else if (input == "2")
                 {
                     Drawing();
+                }
+                else if (input == "3")
+                {
+                    ASCII2();
                 }
                 else
                 {
@@ -49,60 +54,102 @@ namespace game_of_life
 
         static void GameOfLife()
         {
-            int rows = 20, cols = 40;
-            bool[,] board = new bool[rows, cols];
-            var rand = new Random();
+            // setup
+            int width = 40, height = 20;
+            bool[,] board = new bool[height, width];
+            Random rand = new Random();
 
-            // Init board
-            for (int r = 0; r < rows; r++)
-                for (int c = 0; c < cols; c++)
-                    board[r, c] = rand.NextDouble() < 0.3;
+            Console.CursorVisible = false;
+            Console.Clear(); // clear board
 
-            // Game loop
+            // make board
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (rand.Next(4) == 0)
+                    {
+                        board[y, x] = true;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("█");
+                    }
+                    else
+                    {
+                        board[y, x] = false;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.Write(" ");
+                    }
+                }
+                Console.WriteLine();
+            }
+
+            int generation = 0; // gen count
+
+            // loop
             while (true)
             {
-                Console.Clear();
-
-                // Display
-                for (int r = 0; r < rows; r++)
+                // quit key
+                if (Console.KeyAvailable)
                 {
-                    for (int c = 0; c < cols; c++)
-                        Console.Write(board[r, c] ? '█' : '.');
-                    Console.WriteLine();
+                    var key = Console.ReadKey(true).Key;
+                    if (key == ConsoleKey.Q)
+                        break;
                 }
 
-                bool[,] next = new bool[rows, cols];
+                int live = 0, dead = 0; // counts
 
-                // Next gen
-                for (int r = 0; r < rows; r++)
+                for (int y = 0; y < height; y++)
                 {
-                    for (int c = 0; c < cols; c++)
+                    for (int x = 0; x < width; x++)
                     {
-                        int neighbors = 0;
-
-                        // Count neighbors
-                        for (int dr = -1; dr <= 1; dr++)
-                            for (int dc = -1; dc <= 1; dc++)
+                        int count = 0; // neighbors
+                        for (int yy = -1; yy <= 1; yy++)
+                        {
+                            for (int xx = -1; xx <= 1; xx++)
                             {
-                                if (dr == 0 && dc == 0) continue;
-                                int nr = r + dr, nc = c + dc;
-                                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board[nr, nc])
-                                    neighbors++;
+                                if (xx == 0 && yy == 0) continue;
+                                int nx = x + xx, ny = y + yy;
+                                if (nx >= 0 && ny >= 0 && nx < width && ny < height)
+                                {
+                                    if (board[ny, nx]) count++;
+                                }
                             }
+                        }
 
-                        // Rules
-                        next[r, c] = board[r, c] ? neighbors == 2 || neighbors == 3 : neighbors == 3;
+                        bool alive = board[y, x];
+                        if (alive && (count < 2 || count > 3))
+                        {
+                            board[y, x] = false;
+                            Console.SetCursorPosition(x, y);
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.Write(" ");
+                        }
+                        else if (!alive && count == 3)
+                        {
+                            board[y, x] = true;
+                            Console.SetCursorPosition(x, y);
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.Write("█");
+                        }
+
+                        if (board[y, x]) live++;
+                        else dead++;
                     }
                 }
 
-                board = next;
+                // info line
+                Console.ResetColor();
+                Console.SetCursorPosition(0, height + 1);
+                Console.WriteLine($"Generation: {generation}  Live: {live}  Dead: {dead}   (Press Q to return to menu)   ");
 
-                // Exit key
-                if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape)
-                    break;
-
-                Thread.Sleep(200);  // Delay
+                generation++;
+                Thread.Sleep(200); // wait
             }
+
+            Console.ResetColor();
+            Console.SetCursorPosition(0, height + 3);
+            Console.WriteLine("Returning to menu...");
+            Thread.Sleep(1000); // short pause
         }
         static void Drawing()
         {
@@ -196,7 +243,32 @@ namespace game_of_life
         {
 
         }
+        static void ASCII2()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkGray;
 
+            string[] cave = new string[]
+            {
+        "              __    _    _      __",
+        "         ___/  \\__/ \\__/ \\____/  \\___",
+        "       _/                              \\_",
+        "     _/                                  \\_",
+        "    /                                      \\",
+        "   /     ^       ^       ^        ^         \\",
+        "  /                                          \\",
+        " /                                            \\",
+        "/______________________________________________\\",
+            };
+
+            foreach (string line in cave)
+                Console.WriteLine(line);
+
+            Console.ResetColor();
+            Console.WriteLine("\nPress any key to return to menu...");
+            Console.ReadKey(true);
+        }
     }
+    
 
 }
